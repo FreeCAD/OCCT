@@ -434,7 +434,7 @@ void GeomPlate_BuildAveragePlane::BasePlan(const gp_Vec& OZ)
           || ((Abs(n2)<=myTol)&&(Abs(n3)<=myTol))
           || ((Abs(n1)<=myTol)&&(Abs(n3)<=myTol))) {
       myOX.SetCoord(V3(1),V3(2),V3(3));
-      myOY.SetCoord(0,0,0);
+      myOY = OZ ^ myOX;
     }
     else {
       myOX.SetCoord(V3(1),V3(2),V3(3));
