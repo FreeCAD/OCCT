@@ -323,13 +323,22 @@ void BRepFill_Filling::AddConstraints( const BRepFill_SequenceOfEdgeFaceAndOrder
       CurFace = SeqOfConstraints(i).myFace;
       CurOrder = SeqOfConstraints(i).myOrder;
       
+      // this silently defaults to C0 with an invalid value, 
+      // where before an exception would be
+      // thrown out of curve constraints. Good, Bad?
+      Standard_Integer orderAdapt = 0;
+      if (CurOrder == GeomAbs_G1)
+        orderAdapt = 1;
+      else if (CurOrder == GeomAbs_G2)
+        orderAdapt = 2;
+      
       if (CurFace.IsNull()) {
 	if (CurOrder == GeomAbs_C0) {
 	  Handle( BRepAdaptor_Curve ) HCurve = new BRepAdaptor_Curve();
 	  HCurve->Initialize( CurEdge );
 	  const Handle(Adaptor3d_Curve)& aHCurve = HCurve; // to avoid ambiguity
 	  Constr = new BRepFill_CurveConstraint(aHCurve,
-						CurOrder,
+						orderAdapt,
 						myNbPtsOnCur,
 						myTol3d );
 	}
@@ -353,7 +362,7 @@ void BRepFill_Filling::AddConstraints( const BRepFill_SequenceOfEdgeFaceAndOrder
 	  Handle (Adaptor3d_CurveOnSurface) HCurvOnSurf = new Adaptor3d_CurveOnSurface( CurvOnSurf );
 	  
 	  Constr = new GeomPlate_CurveConstraint(HCurvOnSurf,
-						 CurOrder,
+						 orderAdapt,
 						 myNbPtsOnCur,
 						 myTol3d,
 						 myTolAng,
@@ -373,7 +382,7 @@ void BRepFill_Filling::AddConstraints( const BRepFill_SequenceOfEdgeFaceAndOrder
 	  Handle (Adaptor3d_CurveOnSurface) HCurvOnSurf = new Adaptor3d_CurveOnSurface( CurvOnSurf );
 
 	  Constr = new BRepFill_CurveConstraint( HCurvOnSurf,
-						 CurOrder,
+						 orderAdapt,
 						 myNbPtsOnCur,
 						 myTol3d,
 						 myTolAng,
