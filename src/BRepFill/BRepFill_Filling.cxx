@@ -95,6 +95,7 @@ static TopoDS_Wire WireFromList(TopTools_ListOfShape& Edges)
   while (!Edges.IsEmpty())
   {
     TopTools_ListIteratorOfListOfShape itl(Edges);
+    bool found = false;
     for (; itl.More(); itl.Next())
     {
       anEdge = TopoDS::Edge(itl.Value());
@@ -117,11 +118,17 @@ static TopoDS_Wire WireFromList(TopTools_ListOfShape& Edges)
           anEdge.Reverse();
           V2 = V3;
         }
+        found = true;
         break;
       }
     }
-    BB.Add(aWire, anEdge);
-    Edges.Remove(itl);
+    if (found)
+    {
+      BB.Add(aWire, anEdge);
+      Edges.Remove(itl);
+    }
+    else
+      break;
   }
 
   aWire.Closed(Standard_True);
