@@ -579,6 +579,12 @@ void BRepFill_Filling::Build()
 {
   myBuilder.reset (new GeomPlate_BuildPlateSurface (myDegree, myNbPtsOnCur, myNbIter,
                                                     myTol2d, myTol3d, myTolAng, myTolCurv, myAnisotropie));
+  if (myBoundary.IsEmpty())
+  {
+    myIsDone = Standard_False;
+    return;
+  }
+  
   TopoDS_Edge CurEdge;
   TopoDS_Face CurFace;
   Standard_Integer i, j;
