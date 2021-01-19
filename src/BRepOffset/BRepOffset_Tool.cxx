@@ -1879,7 +1879,8 @@ Standard_Boolean BRepOffset_Tool::TryProject
     TopoDS_Edge CurE     = TopoDS::Edge(it.Value());
     Handle(Geom_Curve) C = BRep_Tool::Curve(CurE,L,f,l);
     if (C.IsNull()) {
-      BRepLib::BuildCurve3d(CurE,BRep_Tool::Tolerance(CurE));
+      if (!BRepLib::BuildCurve3d(CurE,BRep_Tool::Tolerance(CurE)))
+        continue;
       C  = BRep_Tool::Curve(CurE,L,f,l);
       if (C.IsNull())
       {
