@@ -3105,6 +3105,7 @@ Standard_Boolean ChFi3d_ComputeCurves(const Handle(Adaptor3d_Surface)&   S1,
       ChFi3d_ProjectPCurv(HC,S1,Pc1,tol3d,tolr1);
       ChFi3d_ProjectPCurv(HC,S2,Pc2,tol3d,tolr2);
       C3d = new Geom_TrimmedCurve(C3d,Udeb,Ufin);
+      tolreached = Min(tolreached,ChFi3d_EvalTolReached(S1,Pc1,S2,Pc2,C3d));
       return Standard_True;
     }
   }
