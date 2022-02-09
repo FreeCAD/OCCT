@@ -916,6 +916,7 @@ void  BRepLib_MakeEdge::Init(const Handle(Geom_Curve)& CC,
   }
   B.Range(E,p1,p2);
   B.Degenerated(E, degenerated);
+  E.Closed(closed);
 
   myError = BRepLib_EdgeDone;
   Done();
