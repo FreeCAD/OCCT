@@ -612,26 +612,18 @@ static void Transform (const Standard_Boolean WithRotation,
   gp_Vec axe1 = Ax1, axe2 = Ax2; 
   if (!axe1.IsParallel(axe2,1.e-4)) {
     gp_Vec Vtrans(Pos1,Pos2),Vsign;
-    Standard_Real alpha,beta,sign=1;
+    Standard_Real alpha,beta;
     alpha = Vtrans.Dot(axe1);
     beta = Vtrans.Dot(axe2);
     if (alpha<-1.e-7) axe1 *=-1;
-    if (beta<1.e-7) axe2 *=-1;
-    alpha = Vtrans.Dot(axe1);
-    beta = Vtrans.Dot(axe2);
+    if (beta<-1.e-7) axe2 *=-1;
     gp_Vec norm2 = axe1 ^ axe2;
-    Vsign.SetLinearForm(Vtrans.Dot(axe1),axe2,-Vtrans.Dot(axe2),axe1);
-    alpha = Vsign.Dot(axe1);
-    beta = Vsign.Dot(axe2);
-    Standard_Boolean pasnul = (Abs(alpha)>1.e-4 && Abs(beta)>1.e-4);
-    if ( alpha*beta>0.0 && pasnul ) sign=-1;
     gp_Ax1 Norm(Pos2,norm2);
     Standard_Real ang = axe1.AngleWithRef(axe2,norm2);
     if (!WithRotation) {
       if (ang>M_PI/2) ang = ang - M_PI;
       if (ang<-M_PI/2) ang = ang + M_PI;
     }
-    ang *= sign;
     Pnew = Pnew.Rotated (Norm,ang);
   }
 }
@@ -1160,11 +1152,14 @@ void BRepFill_CompatibleWires::
     gp_Pnt PPs = Curve.Value(0.1*(U1+9*U2));
     TopTools_ListIteratorOfListOfShape itF(MapVLV(VF)),itL(MapVLV(VL));
     Standard_Integer rang = ideb;
-    while (rang < i) {
+    while (rang < i && itF.More() && itL.More()) {
       itF.Next();
       itL.Next();
       rang++;
     }
+    if (!itF.More() || !itL.More())
+      throw Standard_ConstructionError("BRepFill :: regularize profiles are inconsistent");
+    
     TopoDS_Vertex V1 = TopoDS::Vertex(itF.Value()), V2 = TopoDS::Vertex(itL.Value());
     TopoDS_Edge Esol;
     Standard_Real scalmax=0.;
