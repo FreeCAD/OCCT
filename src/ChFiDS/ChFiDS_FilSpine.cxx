@@ -54,14 +54,16 @@ ChFiDS_Spine(Tol)
 void ChFiDS_FilSpine::Reset(const Standard_Boolean AllData)
 {
   ChFiDS_Spine::Reset(AllData);
-  laws.Clear();
+  if(!parandrad.IsEmpty())
+    laws.Clear();
   if(AllData)
     parandrad.Clear();
   else //Complete parandrad
     {
       Standard_Real spinedeb = FirstParameter();
       Standard_Real spinefin = LastParameter();
-
+      if (parandrad.IsEmpty())
+        return;
       gp_XY FirstUandR = parandrad.First();
       gp_XY LastUandR  = parandrad.Last();
       if (Abs( spinedeb - FirstUandR.X() ) > gp::Resolution())
@@ -225,9 +227,17 @@ void  ChFiDS_FilSpine::SetRadius(const Handle(Law_Function)& C,
 				 const Standard_Integer      /*IinC*/)
 {
   splitdone = Standard_False;
-  Handle(Law_Composite) prout = new Law_Composite();
-  Law_Laws& lst = prout->ChangeLaws();
-  lst.Append(C);
+  if (dynamic_cast<const Law_Composite*>(C.get()))
+  {
+    laws.Append(C);
+  }
+  else
+  {
+    Handle(Law_Composite) prout = new Law_Composite();
+    Law_Laws& lst = prout->ChangeLaws();
+    lst.Append(C);
+    laws.Append(prout);
+  }
   parandrad.Clear();
 }
 
@@ -260,6 +270,9 @@ Standard_Boolean  ChFiDS_FilSpine::IsConstant()const
 
 Standard_Boolean  ChFiDS_FilSpine::IsConstant(const Standard_Integer IE)const 
 {
+  if (parandrad.IsEmpty())
+    return Standard_False;
+  
   Standard_Real Uf = FirstParameter(IE);
   Standard_Real Ul = LastParameter(IE);
 
@@ -369,8 +382,11 @@ void ChFiDS_FilSpine::AppendElSpine(const Handle(ChFiDS_ElSpine)& Els)
 
 void ChFiDS_FilSpine::AppendLaw(const Handle(ChFiDS_ElSpine)& Els)
 {
-  Handle(Law_Composite) l = ComputeLaw(Els);
-  laws.Append(l);
+  if (!parandrad.IsEmpty())
+  {
+    Handle(Law_Composite) l = ComputeLaw(Els);
+    laws.Append(l);
+  }
 }
 
 static void mklaw(Law_Laws&                  res, 
