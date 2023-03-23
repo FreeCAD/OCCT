@@ -177,6 +177,7 @@ void IntPatch_Intersection::Perform(const Handle(Adaptor3d_Surface)&  S1,
       Geom2dInt_GInter Intersector(AC,
                                    Precision::Confusion(),
                                    Precision::Confusion());
+      if (Intersector.IsDone() && AC.IsClosed() && Intersector.NbPoints() == 1) break;
       if (Intersector.IsDone() && Intersector.IsEmpty())
         break;
     }
