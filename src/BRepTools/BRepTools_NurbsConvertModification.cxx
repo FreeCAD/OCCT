@@ -521,7 +521,7 @@ Standard_Boolean BRepTools_NurbsConvertModification::NewPolygon(const TopoDS_Edg
         gp_Pnt aPoint = aCurve->Value(aParam);
         newParameter(aPoint, aNewCurve, aFirst, aLast, aTol, aParam);
       }
-    }
+    } else return Standard_False;
   }
   return Standard_True;
 }
