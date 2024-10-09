@@ -1249,11 +1249,21 @@ ChFi3d_Builder::StartSol(const Handle(ChFiDS_Spine)&    Spine,
 	TopoDS_Face newface = Fv;
 	newface.Orientation(TopAbs_FORWARD);
 	TopExp_Explorer ex;
+	Standard_Boolean found = 0;
 	for(ex.Init(newface,TopAbs_EDGE); ex.More(); ex.Next()){
 	  if(ex.Current().IsSame(E)){
 	    newedge = TopoDS::Edge(ex.Current());
+	    found = 1;
 	    break;
 	  }
+	}
+	if (!found){
+	  // E not in newface, the state is preserved and False is returned
+	  HS->Initialize(F);
+	  W = CP.ParameterOnArc();
+	  pc = BRep_Tool::CurveOnSurface(E,F,Uf,Ul);
+	  pons = pc->Value(W);
+	  return Standard_False;
 	}
 	HC->Initialize(newedge,Fv);
 	pons = HC->Value(W);
