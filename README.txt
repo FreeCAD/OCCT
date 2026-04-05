@@ -1,3 +1,10 @@
+ARCHIVE NOTE
+=======================
+This repository has been archived as it is no longer used by the FreeCAD project, which now uses the official releases of OpenCASCADE at https://github.com/Open-Cascade-SAS/OCCT
+
+Original README follows...
+
+
 Open CASCADE Technology
 =======================
 
